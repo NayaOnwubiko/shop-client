@@ -1,23 +1,25 @@
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { Add, Remove } from "@material-ui/icons";
-import { mobile } from "../responsive";
+import Announcement from "../components/announcement/Announcement";
+import Footer from "../components/footer/Footer";
+import Navbar from "../components/navbar/Navbar";
 import { useSelector } from "react-redux";
 import StripeCheckout from "react-stripe-checkout";
-import { useEffect, useState } from "react";
-import { userRequest } from "../requestMethod";
 import { useNavigate } from "react-router";
+import { userRequest } from "../requestMethod";
 
 const KEY =
+  // while not a good practice, it's just for illustrative processes
   "pk_test_51NFQn9FFopnydcAWsIoIsDSHlqYqlFMpSRCbnL4uOxxPm4cnUtLZ5vP7PFjpr9zd0cYTYGttv5hbBwzHtStD1z6O00QMNtjiem";
 
 const Container = styled.div``;
 
 const Wrapper = styled.div`
   padding: 20px;
-  ${mobile({ padding: "10px" })};
+
+  @media screen and (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 const Title = styled.h1`
@@ -30,6 +32,10 @@ const Top = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px;
+
+  @media screen and (max-width: 380px) {
+    padding: 20px 0px;
+  }
 `;
 
 const TopButton = styled.button`
@@ -43,7 +49,9 @@ const TopButton = styled.button`
 `;
 
 const TopTexts = styled.div`
-  ${mobile({ display: "none" })};
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const TopText = styled.span`
@@ -55,7 +63,14 @@ const TopText = styled.span`
 const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
-  ${mobile({ flexDirection: "column" })};
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 30px;
+  }
+  @media screen and (max-width: 480px) {
+    gap: 20px;
+  }
 `;
 
 const Info = styled.div`
@@ -65,16 +80,29 @@ const Info = styled.div`
 const Product = styled.div`
   display: flex;
   justify-content: space-between;
-  ${mobile({ flexDirection: "column" })};
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const ProductDetail = styled.div`
   flex: 2;
   display: flex;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+    gap: 20px;
+  }
 `;
 
 const Image = styled.img`
   width: 200px;
+
+  @media screen and (max-width: 480px) {
+    display: block;
+    margin: 0 auto;
+  }
 `;
 
 const Details = styled.div`
@@ -82,12 +110,17 @@ const Details = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+
+  @media screen and (max-width: 480px) {
+    gap: 10px;
+  }
 `;
 
 const ProductName = styled.span``;
+
 const ProductId = styled.span``;
 
-const ProductColor = styled.div`
+const ProductColor = styled.span`
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -107,18 +140,25 @@ const PriceDetail = styled.div`
 const ProductAmountContainer = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const ProductAmount = styled.div`
   font-size: 24px;
   margin: 5px;
-  ${mobile({ margin: "5px 15px" })};
+
+  @media screen and (max-width: 768px) {
+    margin: 5px 15px;
+  }
 `;
 
 const ProductPrice = styled.div`
   font-size: 30px;
   font-weight: 200;
-  ${mobile({ marginBottom: "20px" })};
+
+  @media screen and (max-width: 768px) {
+    margin-bottom: 20px;
+  }
 `;
 
 const Hr = styled.hr`
@@ -133,6 +173,15 @@ const Summary = styled.div`
   border-radius: 10px;
   padding: 20px;
   height: 50vh;
+
+  @media screen and (max-width: 768px) {
+    width: 70%;
+    align-self: center;
+  }
+  @media screen and (max-width: 480px) {
+    width: 90%;
+    margin: 20px;
+  }
 `;
 
 const SummaryTitle = styled.h1`
@@ -151,15 +200,7 @@ const SummaryItemText = styled.span``;
 
 const SummaryItemPrice = styled.span``;
 
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
-
-const Cart = () => {
+function Cart() {
   const cart = useSelector((state) => state.cart);
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
@@ -173,58 +214,53 @@ const Cart = () => {
       try {
         const res = await userRequest.post("/checkout/payment", {
           tokenId: stripeToken.id,
-          amount: 500,
+          amount: cart.total * 100,
         });
-        navigate("/success");
-      } catch (err) {}
+        navigate("/success", { data: res.data });
+      } catch {}
     };
     stripeToken && makeRequest();
-  }, [stripeToken, cart.total, history]);
+  }, [stripeToken, cart.total, navigate]);
 
   return (
     <Container>
-      <Announcement />
       <Navbar />
+      <Announcement />
       <Wrapper>
         <Title>YOUR BAG</Title>
         <Top>
-          <TopButton>CONTINUE SHOPPING</TopButton>
+          <TopButton onClick={() => navigate("/")}>CONTINUE SHOPPING</TopButton>
           <TopTexts>
             <TopText>Shopping Bag(2)</TopText>
-            <TopText>Your Wishlist (0)</TopText>
+            <TopText>Your wishlist (0)</TopText>
           </TopTexts>
           <TopButton type="filled">CHECKOUT NOW</TopButton>
         </Top>
         <Bottom>
           <Info>
-            {cart.products.map((product) => (
+            {cart.products?.map((product) => (
               <Product>
                 <ProductDetail>
-                  <Image src={product.img} />
+                  <Image src={product.img} alt="" />
                   <Details>
                     <ProductName>
-                      <b>Product: </b>
-                      {product.title}
+                      <b>Product:</b> {product.title}
                     </ProductName>
                     <ProductId>
-                      <b>ID: </b>
-                      {product._id}
+                      <b>ID: </b> {product._id}
                     </ProductId>
                     <ProductColor color={product.color} />
                     <ProductSize>
-                      <b>Size: </b>
-                      {product.size}
+                      <b>Size: </b> {product.size}
                     </ProductSize>
                   </Details>
                 </ProductDetail>
                 <PriceDetail>
                   <ProductAmountContainer>
-                    <Add />
                     <ProductAmount>{product.quantity}</ProductAmount>
-                    <Remove />
                   </ProductAmountContainer>
                   <ProductPrice>
-                    ${product.price * product.quantity}
+                    $ {product.price * product.quantity}
                   </ProductPrice>
                 </PriceDetail>
               </Product>
@@ -232,41 +268,41 @@ const Cart = () => {
             <Hr />
           </Info>
           <Summary>
-            <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+            <SummaryTitle>ORDER SUNNARY</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>${cart.total}</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Estimated Shipping</SummaryItemText>
-              <SummaryItemText>$5.90</SummaryItemText>
+              <SummaryItemPrice>$ 5.90</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Shipping Discount</SummaryItemText>
-              <SummaryItemPrice>- $5.90</SummaryItemPrice>
+              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$80</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
-            <StripeCheckout
-              name="Shop"
-              image="https://avatars.githubusercontent.com/u/115788583?v=4"
-              billingAddress
-              shippingAddress
-              description={`Your total is $${cart.total}`}
-              amount={cart.total * 100}
-              token={onToken}
-              stripeKey={KEY}
-            >
-              <Button>CHECKOUT NOW</Button>
-            </StripeCheckout>
+            {cart.total !== 0 && (
+              <StripeCheckout
+                name="Shop"
+                image="https://avatars.githubusercontent.com/u/115788583?v=4"
+                billingAddress
+                shippingAddress
+                description={`Your total is $${cart.total}`}
+                amount={cart.total * 100}
+                token={onToken}
+                stripeKey={KEY}
+              ></StripeCheckout>
+            )}
           </Summary>
         </Bottom>
       </Wrapper>
       <Footer />
     </Container>
   );
-};
+}
 
 export default Cart;

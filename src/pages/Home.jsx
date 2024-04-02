@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import Announcement from "../components/Announcement";
-import Slider from "../components/Slider";
-import Categories from "../components/Categories";
-import Products from "../components/Products";
-import Newsletter from "../components/Newsletter";
-import Footer from "../components/Footer";
+import Navbar from "../components/navbar/Navbar";
+import Announcement from "../components/announcement/Announcement";
+import Slider from "../components/slider/Slider";
+import Categories from "../components/categories/Categories";
+import Products from "../components/products/Products";
+import NewsLetter from "../components/newsLetter/NewsLetter";
+import Footer from "../components/footer/Footer";
 
 const Home = () => {
   return (
@@ -15,7 +15,7 @@ const Home = () => {
       <Slider />
       <Categories />
       <Products />
-      <Newsletter />
+      <NewsLetter />
       <Footer />
     </div>
   );
