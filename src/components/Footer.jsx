@@ -89,10 +89,8 @@ const Footer = () => {
       <Left>
         <Logo>Shop.</Logo>
         <Desc>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est, debitis
-          porro hic beatae repudiandae sapiente! Assumenda itaque doloremque
-          praesentium nemo quidem, repellat, commodi vel dolores reprehenderit
-          doloribus, nobis a! Doloribus?
+        Shop from the comfort of your home and browse our wide variety of clothing, footwear, and accessories. 
+        Whether you're searching for a timeless dress, the perfect pair of jeans, or that on-trend top, we have something for everyone.
         </Desc>
         <SocialContainer>
           <SocialIcon color="3B5999">
